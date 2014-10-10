@@ -9,5 +9,15 @@
   <welcome-file-list>
     <welcome-file>DownloadStatistics.html</welcome-file>
   </welcome-file-list>
+	
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>statsByDomainServiceImpl</servlet-name>
+    <servlet-class>hu.evosoft.eo.downloadstats.server.StatsByDomainServiceImpl</servlet-class>
+  </servlet>
 
+  <servlet-mapping>
+    <servlet-name>statsByDomainServiceImpl</servlet-name>
+    <url-pattern>/downloadstatistics/statsByDomain</url-pattern>
+  </servlet-mapping>
 </web-app>

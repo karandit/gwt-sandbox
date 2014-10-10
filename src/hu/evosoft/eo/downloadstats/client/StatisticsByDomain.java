@@ -1,6 +1,8 @@
 package hu.evosoft.eo.downloadstats.client;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -12,8 +14,9 @@ import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
 public class StatisticsByDomain extends DockLayoutPanel {
-	private BarChart chart;
-
+	private BarChart mChart;
+	private StatsByDomainServiceAsync mStatsByDomainSvc;
+	
 	public StatisticsByDomain() {
 		super(Unit.PX);
 		initialize();
@@ -26,39 +29,26 @@ public class StatisticsByDomain extends DockLayoutPanel {
 			@Override
 			public void run() {
 				// Create and attach the chart
-				chart = new BarChart();
-				add(chart);
+				mChart = new BarChart();
+				add(mChart);
 				draw();
 			}
 		});
 	}
 
-	private void draw() {
-		String[] countries = new String[] { "index.hu", "origo.hu", "totalcar.hu", "noklapja.hu" };
-		int[] years = new int[] { 
-				2003, 2004, 2005, 2006, 2007, 
-				2008 };
-		int[][] values = new int[][] { 
-				{ 1336060, 1538156, 1576579, 1600652, 1968113, 1901067 },
-				{ 400361, 366849, 440514, 434552, 393032, 517206 },
-				{ 1001582, 1119450, 993360, 1004163, 979198, 916965 },
-				{ 997974, 941795, 930593, 897127, 1080887, 1056036 } };
+	public StatsByDomainServiceAsync getStatsByDomainSvc() {
+		if (mStatsByDomainSvc == null) {
+			mStatsByDomainSvc = GWT.create(StatsByDomainService.class);
+		}
+		return mStatsByDomainSvc;
+	}
 
+
+	private void draw() {
 		// Prepare the data
-		DataTable dataTable = DataTable.create();
+		final DataTable dataTable = DataTable.create();
 		dataTable.addColumn(ColumnType.STRING, "Domain");
-		for (int i = 0; i < countries.length; i++) {
-			dataTable.addColumn(ColumnType.NUMBER, countries[i]);
-		}
-		dataTable.addRows(years.length);
-		for (int i = 0; i < years.length; i++) {
-			dataTable.setValue(i, 0, String.valueOf(years[i]));
-		}
-		for (int col = 0; col < values.length; col++) {
-			for (int row = 0; row < values[col].length; row++) {
-				dataTable.setValue(row, col + 1, values[col][row]);
-			}
-		}
+		dataTable.addColumn(ColumnType.NUMBER, "Count");
 
 		// Set options
 		BarChartOptions options = BarChartOptions.create();
@@ -68,6 +58,31 @@ public class StatisticsByDomain extends DockLayoutPanel {
 		options.setVAxis(VAxis.create("Domain"));
 
 		// Draw the chart
-		chart.draw(dataTable, options);
+		mChart.draw(dataTable, options);
+		
+		AsyncCallback<StatsByDomain[]> callback = new AsyncCallback<StatsByDomain[]>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+
+			@Override
+			public void onSuccess(StatsByDomain[] result) {
+				updateTableContent(result, dataTable);
+			}
+		};
+		StatsByDomainServiceAsync srvc = getStatsByDomainSvc();
+		srvc.getStats(callback);
+	}
+	
+	private void updateTableContent(StatsByDomain[] stats, DataTable dataTable) {
+		System.out.println("StatisticsByDomain.updateTableContent()");
+		dataTable.removeRows(0, dataTable.getNumberOfRows());
+		dataTable.addRows(stats.length);
+		for (int row = 0; row < stats.length; row++) {
+			dataTable.setValue(row, 0, stats[row].getDomain());
+			dataTable.setValue(row, 1, stats[row].getCount());
+		}
 	}
 }
