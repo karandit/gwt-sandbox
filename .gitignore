@@ -1,2 +1,5 @@
 /bin/
-/WebContent/WEB-INF/classes
+/WebContent/WEB-INF/classes/
+/WebContent/WEB-INF/deploy/
+/WebContent/downloadstatistics/
+/gwt-unitCache/
