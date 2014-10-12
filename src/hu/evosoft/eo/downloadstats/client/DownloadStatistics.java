@@ -56,7 +56,6 @@ public class DownloadStatistics implements EntryPoint {
 				}
 				navPanel.add(navFlowPanel, new HTML(navbar.navLabel), 24);
 			}
-			
 			DockLayoutPanel dashboard = new SplitLayoutPanel();
 			dashboard.addWest(navPanel, 140);
 			dashboard.add(contentPanel);
@@ -89,12 +88,9 @@ public class DownloadStatistics implements EntryPoint {
 	public void onModuleLoad() {
 		DockLayoutPanel dashboard = new DashboardBuilder()
 		.addNavBar("Statistics")
-			.addItem("By domain", new StatisticsByDomain())
-			.addItem("By time", new StatisticsByTime())
-		.end()
-		.addNavBar("Configuration")
-			.addItem("Users", new HTML("User Management"))
-			.addItem("Roles", new HTML("Role Management"))
+			.addItem("By domain", new StatisticsByDomainPanel())
+			.addItem("By time ", new StatisticsByTimePanel())
+			.addItem("By time in range", new StatisticsByTimeWithRangePanel())
 		.end()
 		.buildDashboard();
 		RootLayoutPanel.get().add(dashboard);
