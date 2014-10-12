@@ -1,5 +1,7 @@
 package hu.evosoft.eo.downloadstats.client;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 import com.google.gwt.core.client.JsArray;
@@ -164,16 +166,22 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 
 	private void updateTableContent(JsArray<StatByTimeData> stats, DataTable dataTable) {
 		dataTable.removeRows(0, dataTable.getNumberOfRows());
-		
 		dataTable.addRows(stats.length());
-		for (int row = 0; row < stats.length(); row++) {
-			StatByTimeData statByTimeData = stats.get(row);
-			Date date = new Date((long) statByTimeData.getTimeStamp());
-			long count = (long) statByTimeData.getCount();
+
+		StatByTimeData[] statsArr = new StatByTimeData[stats.length()];
+		for (int i = 0; i < stats.length(); i++) {
+			statsArr[i] = stats.get(i);
+		}
+		
+		Arrays.sort(statsArr, new StatsByTimeDataComparator());
+		int row = 0;
+		for (StatByTimeData data : statsArr) {
+			Date date = new Date((long) data.getTimeStamp());
+			long count = (long) data.getCount();
 			dataTable.setValue(row, 0, date);
 			dataTable.setValue(row, 1, count);
+			row++;
 		}
-		dataTable.sort(1);
 		getDashboardWidget().draw(dataTable);
 		getChart().getChart().draw(dataTable);
 	    // Clear any errors.
@@ -190,4 +198,12 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 		errorMsgLabel.setText("Error: " + error);
 		errorMsgLabel.setVisible(true);
 	}
+	
+	private static class StatsByTimeDataComparator implements Comparator<StatByTimeData> {
+		@Override
+		public int compare(StatByTimeData o1, StatByTimeData o2) {
+			return (int) (o1.getTimeStamp() - o2.getTimeStamp());
+		}
+	}
+		
 }
