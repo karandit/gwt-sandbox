@@ -32,7 +32,7 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 	
 	//------------------------- constants ------------------------------------------------------------------------------
-	private static final String JSON_URL = "http://alaska.cfapps.io/byTime";
+	private static final String JSON_URL = DownloadStatistics.API_DOMAIN +  "/byTime";
 
 	//------------------------- fields ---------------------------------------------------------------------------------
 	private Dashboard dashboard;
@@ -168,10 +168,7 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 		dataTable.removeRows(0, dataTable.getNumberOfRows());
 		dataTable.addRows(stats.length());
 
-		StatByTimeData[] statsArr = new StatByTimeData[stats.length()];
-		for (int i = 0; i < stats.length(); i++) {
-			statsArr[i] = stats.get(i);
-		}
+		StatByTimeData[] statsArr = convertToArray(stats);
 		
 		Arrays.sort(statsArr, new StatsByTimeDataComparator());
 		int row = 0;
@@ -186,6 +183,14 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 		getChart().getChart().draw(dataTable);
 	    // Clear any errors.
 	    errorMsgLabel.setVisible(false);
+	}
+
+	private StatByTimeData[] convertToArray(JsArray<StatByTimeData> stats) {
+		StatByTimeData[] statsArr = new StatByTimeData[stats.length()];
+		for (int i = 0; i < stats.length(); i++) {
+			statsArr[i] = stats.get(i);
+		}
+		return statsArr;
 	}
 
 	@SuppressWarnings("deprecation")

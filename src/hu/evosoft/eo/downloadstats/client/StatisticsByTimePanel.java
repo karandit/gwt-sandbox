@@ -26,7 +26,7 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 public class StatisticsByTimePanel extends DockLayoutPanel {
 	
 	//------------------------- constants ------------------------------------------------------------------------------
-	private static final String JSON_URL = "http://alaska.cfapps.io/byTime";
+	private static final String JSON_URL = DownloadStatistics.API_DOMAIN +  "/byTime";
 	private static final int REFRESH_INTERVAL = 5000; // ms
 
 	//------------------------- fields ---------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ public class StatisticsByTimePanel extends DockLayoutPanel {
 			dataTable.setValue(row, 1, count);
 		}
 	    // Display timestamp showing last refresh.
-	    lastUpdatedLabel.setText("Last update : " + getFormat(PredefinedFormat.DATE_MEDIUM).format(new Date()));
+	    lastUpdatedLabel.setText("Last update : " + getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date()));
 	    // Clear any errors.
 	    errorMsgLabel.setVisible(false);
 	    chart.redraw();

@@ -26,8 +26,9 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 
 public class StatisticsByDomainPanel extends DockLayoutPanel {
 	
+	private static final int TOP = 30;
 	//------------------------- constants ------------------------------------------------------------------------------
-	private static final String JSON_URL = "http://alaska.cfapps.io/byDomain";
+	private static final String JSON_URL = DownloadStatistics.API_DOMAIN +  "/byDomain";
 	private static final int REFRESH_INTERVAL = 5000; // ms
 
 	//------------------------- fields ---------------------------------------------------------------------------------
@@ -78,12 +79,10 @@ public class StatisticsByDomainPanel extends DockLayoutPanel {
 	private void draw(final DataTable dataTable) {
 		// Set options
 		BarChartOptions options = BarChartOptions.create();
-		options.setFontName("Tahoma");
 		options.setLegend(Legend.create(LegendPosition.NONE));
-		options.setTitle("Download statistics by domain");
+		options.setTitle("TOP " + TOP  + " Download statistics by domain");
 		options.setHAxis(HAxis.create("Downloads"));
 		options.setVAxis(VAxis.create("Domains"));
-
 		// Draw the chart
 		chart.draw(dataTable, options);
 
@@ -115,17 +114,17 @@ public class StatisticsByDomainPanel extends DockLayoutPanel {
 			}
 		});
 	}
-	
 	private void updateTableContent(JsArray<StatByDomainData> stats, DataTable dataTable) {
 		dataTable.removeRows(0, dataTable.getNumberOfRows());
-		dataTable.addRows(stats.length());
-		for (int row = 0; row < stats.length(); row++) {
-			dataTable.setValue(row, 0, stats.get(row).getDomain());
-			dataTable.setValue(row, 1, stats.get(row).getCount());
+		int length = Math.min(TOP, stats.length());
+		dataTable.addRows(length);
+		for (int row = 0; row < length; row++) {
+			StatByDomainData data = stats.get(row);
+			dataTable.setValue(row, 0, data.getDomain());
+			dataTable.setValue(row, 1, data.getCount());
 		}
-		dataTable.sort(1);
 	    // Display timestamp showing last refresh.
-	    lastUpdatedLabel.setText("Last update : " + getFormat(PredefinedFormat.DATE_MEDIUM).format(new Date()));
+	    lastUpdatedLabel.setText("Last update : " + getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date()));
 	    // Clear any errors.
 	    errorMsgLabel.setVisible(false);
 	    chart.redraw();
@@ -135,4 +134,8 @@ public class StatisticsByDomainPanel extends DockLayoutPanel {
 		errorMsgLabel.setText("Error: " + error);
 		errorMsgLabel.setVisible(true);
 	}
+	
+    public static int min(int a, int b) {
+        return (a <= b) ? a : b;
+    }
 }

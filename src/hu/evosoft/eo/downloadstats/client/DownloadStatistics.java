@@ -19,6 +19,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DownloadStatistics implements EntryPoint {
 
+	//------------------------- constants ------------------------------------------------------------------------------
+	public static final String API_DOMAIN = "http://api-eo.cfapps.io";
+
 	private static class Tuple<T1, T2> {
 		public final T1 first;
 		public final T2 second;
