@@ -23,6 +23,11 @@ import com.googlecode.gwt.charts.client.options.Legend;
 import com.googlecode.gwt.charts.client.options.LegendPosition;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
+/**
+ * Displays a ColumnChart with the downloads by time. It refreshes itself automatically in every 5 seconds.
+ * 
+ * @author Karandi Tamas
+ */
 public class StatisticsByTimePanel extends DockLayoutPanel {
 	
 	//------------------------- constants ------------------------------------------------------------------------------

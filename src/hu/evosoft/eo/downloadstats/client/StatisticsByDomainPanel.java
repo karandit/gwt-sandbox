@@ -24,6 +24,11 @@ import com.googlecode.gwt.charts.client.options.Legend;
 import com.googlecode.gwt.charts.client.options.LegendPosition;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
+/**
+ * Displays a BarChart with the downloads by domain. It refreshes itself automatically in every 5 seconds.
+ * 
+ * @author Karandi Tamas
+ */
 public class StatisticsByDomainPanel extends DockLayoutPanel {
 	
 	private static final int TOP = 30;

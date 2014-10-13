@@ -17,6 +17,11 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * The entry point to the whole Single Page Application.
+ * 
+ * @author Karandi Tamas
+ */
 public class DownloadStatistics implements EntryPoint {
 
 	//------------------------- constants ------------------------------------------------------------------------------
@@ -93,7 +98,7 @@ public class DownloadStatistics implements EntryPoint {
 		.addNavBar("Statistics")
 			.addItem("By domain", new StatisticsByDomainPanel())
 			.addItem("By time ", new StatisticsByTimePanel())
-			.addItem("By time in range", new StatisticsByTimeWithRangePanel())
+//			.addItem("By time in range", new StatisticsByTimeWithRangePanel())
 		.end()
 		.buildDashboard();
 		RootLayoutPanel.get().add(dashboard);

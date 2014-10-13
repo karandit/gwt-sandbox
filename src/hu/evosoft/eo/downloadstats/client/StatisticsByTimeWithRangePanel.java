@@ -33,6 +33,12 @@ import com.googlecode.gwt.charts.client.options.Legend;
 import com.googlecode.gwt.charts.client.options.LegendPosition;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
+/**
+ * Displays a ColumnChart with the downloads by domain. It refreshes itself automatically in every 5 seconds.
+ * At the bottom has a range filter where the user can select a range. 
+ * 
+ * @author Karandi Tamas
+ */
 public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 	
 	//------------------------- constants ------------------------------------------------------------------------------
