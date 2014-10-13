@@ -1,5 +1,7 @@
 package hu.evosoft.eo.downloadstats.client;
 
+import static com.google.gwt.i18n.client.DateTimeFormat.getFormat;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -7,7 +9,9 @@ import java.util.Date;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -33,13 +37,15 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 	
 	//------------------------- constants ------------------------------------------------------------------------------
 	private static final String JSON_URL = DownloadStatistics.API_DOMAIN +  "/byTime";
+	private static final int REFRESH_INTERVAL = 5000; // ms
 
 	//------------------------- fields ---------------------------------------------------------------------------------
 	private Dashboard dashboard;
 	private ChartWrapper<ColumnChartOptions> chart;
 	private ChartRangeFilter rangeFilter;
 	private Label errorMsgLabel;
-	
+	private Label lastUpdatedLabel;
+
 	public StatisticsByTimeWithRangePanel() {
 		super(Unit.PX);
 		initialize();
@@ -56,6 +62,9 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 			    errorMsgLabel.setVisible(false);
 			    addNorth(errorMsgLabel, 24);
 				
+			    lastUpdatedLabel = new Label();
+			    addSouth(lastUpdatedLabel, 24);
+			    
 				addNorth(getDashboardWidget(), 10);
 				addSouth(getNumberRangeFilter(), 100);
 				add(getChart());
@@ -64,6 +73,14 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 				dataTable.addColumn(ColumnType.DATETIME, "Time");
 				dataTable.addColumn(ColumnType.NUMBER, "Downloads");
 				draw(dataTable);
+				// Setup timer to refresh content automatically.
+			    Timer refreshTimer = new Timer() {
+			      @Override
+			      public void run() {
+			        loadData(dataTable);
+			      }
+			    };
+			    refreshTimer.scheduleRepeating(REFRESH_INTERVAL);;				
 			}
 		});
 	}
@@ -133,10 +150,8 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 			chart.setOptions(chartOptions);
 		}
 
-
 		// Draw the chart
 		dashboard.bind(rangeFilter, chart);
-		loadData(dataTable);
 	}
 
 	/** Send request to server and catch any errors.
@@ -169,7 +184,6 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 		dataTable.addRows(stats.length());
 
 		StatByTimeData[] statsArr = convertToArray(stats);
-		
 		Arrays.sort(statsArr, new StatsByTimeDataComparator());
 		int row = 0;
 		for (StatByTimeData data : statsArr) {
@@ -181,7 +195,9 @@ public class StatisticsByTimeWithRangePanel extends DockLayoutPanel {
 		}
 		getDashboardWidget().draw(dataTable);
 		getChart().getChart().draw(dataTable);
-	    // Clear any errors.
+	    // Display timestamp showing last refresh.
+	    lastUpdatedLabel.setText("Last update : " + getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date()));
+		// Clear any errors.
 	    errorMsgLabel.setVisible(false);
 	}
 

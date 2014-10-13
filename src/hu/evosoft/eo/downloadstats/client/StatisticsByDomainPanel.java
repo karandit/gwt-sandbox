@@ -101,7 +101,7 @@ public class StatisticsByDomainPanel extends DockLayoutPanel {
 			@Override
 			public void onFailure(Throwable caught) {
 				displayError("Couldn't retrieve JSON: " + caught.getMessage());
-				caught.printStackTrace();
+				System.err.println("StatisticsByDomainPanel Failure" + caught.getMessage());
 			}
 
 			@Override

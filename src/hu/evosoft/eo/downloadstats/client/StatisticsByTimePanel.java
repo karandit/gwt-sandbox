@@ -103,7 +103,7 @@ public class StatisticsByTimePanel extends DockLayoutPanel {
 			@Override
 			public void onFailure(Throwable caught) {
 				displayError("Couldn't retrieve JSON: " + caught.getMessage());
-				caught.printStackTrace();
+				System.err.println("StatisticsByTimePanel Failure" + caught.getMessage());
 			}
 
 			@Override
@@ -127,11 +127,11 @@ public class StatisticsByTimePanel extends DockLayoutPanel {
 			dataTable.setValue(row, 0, date);
 			dataTable.setValue(row, 1, count);
 		}
+		chart.redraw();
 	    // Display timestamp showing last refresh.
 	    lastUpdatedLabel.setText("Last update : " + getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date()));
 	    // Clear any errors.
 	    errorMsgLabel.setVisible(false);
-	    chart.redraw();
 	}
 
 	@SuppressWarnings("deprecation")
